@@ -1,10 +1,12 @@
 package com.abrahamdev.restaurantesmexico
 
 import android.os.Bundle
-import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar // <-- No olvides importar esto
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import com.abrahamdev.restaurantesmexico.adapters.MenuPagerAdapter
 import com.abrahamdev.restaurantesmexico.data.RestauranteRepository
 
 class MenuActivity : AppCompatActivity() {
@@ -13,43 +15,57 @@ class MenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
 
-        // Toolbar personalizada
-        val toolbar = findViewById<Toolbar>(R.id.toolbarMenu)
-        setSupportActionBar(toolbar)
+        // Recuperamos el ID del restaurante seleccionado
+        val restauranteId = intent.getIntExtra(
+            "RESTAURANTE_ID",
+            -1
+        )
 
-        // Botón de retroceso en la barra
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        // Obtiene el ID del restaurante de los extras
-        val restauranteId = intent.getIntExtra("RESTAURANTE_ID", -1)
-
-
-        // Busca el restaurante por su ID
+        // Buscamos el restaurante
         val restaurante = RestauranteRepository
             .obtenerRestaurantes()
             .find { it.id == restauranteId }
 
-        // Obtiene los datos del restaurante
-        val txtNombre = findViewById<TextView>(R.id.txtNombreRestaurante)
-        val txtId = findViewById<TextView>(R.id.txtIdRestaurante)
+        // Mostramos su nombre
+        val txtNombre = findViewById<TextView>(
+            R.id.txtNombreRestaurante
+        )
 
-        // Rellena la vista con los datos del restaurante si lo encuentra
         if (restaurante != null) {
             txtNombre.text = restaurante.nombre
-            txtId.text = "ID: ${restaurante.id}"
         } else {
             txtNombre.text = "Restaurante no encontrado"
-            txtId.text = ""
         }
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-                return true
+        // Obtenemos las pestañas y el ViewPager2
+        val tabLayout = findViewById<TabLayout>(
+            R.id.tabLayout
+        )
+
+        val viewPager = findViewById<ViewPager2>(
+            R.id.viewPager
+        )
+
+        // Creamos el adaptador
+        val adapter = MenuPagerAdapter(
+            this,
+            restauranteId
+        )
+
+        viewPager.adapter = adapter
+
+        // Conectamos las pestañas con las páginas
+        TabLayoutMediator(
+            tabLayout,
+            viewPager
+        ) { tab, position ->
+
+            when (position) {
+                0 -> tab.text = "Comida"
+                1 -> tab.text = "Bebidas"
+                2 -> tab.text = "Complementos"
             }
-        }
-        return super.onOptionsItemSelected(item)
+
+        }.attach()
     }
 }
