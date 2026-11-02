@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import com.abrahamdev.restaurantesmexico.adapters.RestauranteAdapter
 import com.abrahamdev.restaurantesmexico.data.RestauranteRepository
 
@@ -16,6 +17,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val toolbar = findViewById<MaterialToolbar>(
+            R.id.toolbar
+        )
+
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.title = "Restaurantes"
         recyclerRestaurantes =
             findViewById(R.id.recyclerRestaurantes)
 

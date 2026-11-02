@@ -5,12 +5,21 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.abrahamdev.restaurantesmexico.data.ProductoRepository
 import com.abrahamdev.restaurantesmexico.data.RestauranteRepository
-
+import com.google.android.material.appbar.MaterialToolbar
 class DetalleProductoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detalle_producto)
+
+        val toolbar = findViewById<MaterialToolbar>(
+            R.id.toolbar
+        )
+
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.title = "Detalle del producto"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Recuperamos el ID enviado desde la pantalla anterior
         val productoId = intent.getIntExtra(
@@ -60,5 +69,10 @@ class DetalleProductoActivity : AppCompatActivity() {
                 restaurante?.nombre ?: "Restaurante desconocido"
 
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

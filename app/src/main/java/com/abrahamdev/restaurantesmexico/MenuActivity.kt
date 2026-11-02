@@ -8,12 +8,19 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.abrahamdev.restaurantesmexico.adapters.MenuPagerAdapter
 import com.abrahamdev.restaurantesmexico.data.RestauranteRepository
-
+import com.google.android.material.appbar.MaterialToolbar
 class MenuActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
+        val toolbar = findViewById<MaterialToolbar>(
+            R.id.toolbar
+        )
+
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Recuperamos el ID del restaurante seleccionado
         val restauranteId = intent.getIntExtra(
@@ -33,6 +40,8 @@ class MenuActivity : AppCompatActivity() {
 
         if (restaurante != null) {
             txtNombre.text = restaurante.nombre
+
+            supportActionBar?.title = restaurante.nombre
         } else {
             txtNombre.text = "Restaurante no encontrado"
         }
@@ -67,5 +76,10 @@ class MenuActivity : AppCompatActivity() {
             }
 
         }.attach()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }
