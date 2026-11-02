@@ -8,10 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.abrahamdev.restaurantesmexico.adapters.RestauranteAdapter
 import com.abrahamdev.restaurantesmexico.data.RestauranteRepository
+import android.view.Menu
+import androidx.appcompat.widget.SearchView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerRestaurantes: RecyclerView
+    private lateinit var restauranteAdapter: RestauranteAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,15 +39,44 @@ class MainActivity : AppCompatActivity() {
 
 
         // Configurar el adaptador
-        recyclerRestaurantes.adapter =
-            RestauranteAdapter(restaurantes) { restaurante ->
-                // Maneja el clic en un restaurante y lanza el MenuActivity
-                val intent = Intent(this, MenuActivity::class.java)
+        restauranteAdapter = RestauranteAdapter(restaurantes) { restaurante ->
 
-                // Mandamos el ID del restaurante
-                intent.putExtra("RESTAURANTE_ID", restaurante.id)
+            val intent = Intent(this, MenuActivity::class.java)
 
-                startActivity(intent)
+            intent.putExtra("RESTAURANTE_ID", restaurante.id)
+
+            startActivity(intent)
+        }
+
+        recyclerRestaurantes.adapter = restauranteAdapter
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+
+        menuInflater.inflate(R.menu.menu_busqueda, menu)
+
+        val itemBuscar = menu.findItem(R.id.action_buscar)
+
+        val searchView = itemBuscar.actionView as SearchView
+
+        searchView.queryHint = "Buscar restaurante..."
+
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+
+                override fun onQueryTextSubmit(query: String?): Boolean {
+
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+
+                    restauranteAdapter.filtrar(newText.orEmpty())
+                    return true
+                }
             }
+        )
+
+        return true
     }
 }

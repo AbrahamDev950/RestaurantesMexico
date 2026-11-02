@@ -1,3 +1,4 @@
+
 package com.abrahamdev.restaurantesmexico.adapters
 
 import android.view.LayoutInflater
@@ -9,10 +10,15 @@ import com.abrahamdev.restaurantesmexico.R
 import com.abrahamdev.restaurantesmexico.data.Restaurante
 
 class RestauranteAdapter(
-    private val restaurantes: List<Restaurante>,
-    // Recibe una función lambda que se ejecutará cuando se haga clic en un restaurante
+    restaurantes: List<Restaurante>,
     private val onRestauranteClick: (Restaurante) -> Unit
 ) : RecyclerView.Adapter<RestauranteAdapter.RestauranteViewHolder>() {
+
+    // Conservamos la lista original
+    private val restaurantesOriginales = restaurantes.toList()
+
+    // Lista que realmente mostraremos
+    private var restaurantes = restaurantes.toList()
 
     class RestauranteViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
@@ -43,7 +49,7 @@ class RestauranteAdapter(
         holder.nombre.text = restaurante.nombre
         holder.direccion.text = restaurante.direccion
         holder.descripcion.text = restaurante.descripcion
-        // El adapter se encarga de manejar el clic pero el activity lo maneja
+
         holder.itemView.setOnClickListener {
             onRestauranteClick(restaurante)
         }
@@ -51,5 +57,29 @@ class RestauranteAdapter(
 
     override fun getItemCount(): Int {
         return restaurantes.size
+    }
+
+    // Función para filtrar restaurantes
+    fun filtrar(texto: String) {
+
+        restaurantes = if (texto.isBlank()) {
+
+            restaurantesOriginales
+
+        } else {
+
+            restaurantesOriginales.filter { restaurante ->
+
+                restaurante.nombre.contains(
+                    texto,
+                    ignoreCase = true
+                ) || restaurante.direccion.contains(
+                    texto,
+                    ignoreCase = true
+                )
+            }
+        }
+
+        notifyDataSetChanged()
     }
 }
