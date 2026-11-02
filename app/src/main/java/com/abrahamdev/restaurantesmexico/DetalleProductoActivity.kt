@@ -1,20 +1,64 @@
 package com.abrahamdev.restaurantesmexico
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.abrahamdev.restaurantesmexico.data.ProductoRepository
+import com.abrahamdev.restaurantesmexico.data.RestauranteRepository
 
 class DetalleProductoActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_detalle_producto)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        // Recuperamos el ID enviado desde la pantalla anterior
+        val productoId = intent.getIntExtra(
+            "PRODUCTO_ID",
+            -1
+        )
+
+        // Buscamos el producto
+        val producto = ProductoRepository
+            .obtenerProductoPorId(productoId)
+
+        if (producto != null) {
+
+            // Buscamos el restaurante al que pertenece
+            val restaurante = RestauranteRepository
+                .obtenerRestaurantes()
+                .find { it.id == producto.restauranteId }
+
+            // Referencias a los elementos visuales
+            val txtNombre = findViewById<TextView>(
+                R.id.txtDetalleNombre
+            )
+
+            val txtPrecio = findViewById<TextView>(
+                R.id.txtDetallePrecio
+            )
+
+            val txtDescripcion = findViewById<TextView>(
+                R.id.txtDetalleDescripcion
+            )
+
+            val txtCategoria = findViewById<TextView>(
+                R.id.txtDetalleCategoria
+            )
+
+            val txtRestaurante = findViewById<TextView>(
+                R.id.txtDetalleRestaurante
+            )
+
+            // Mostramos la información
+            txtNombre.text = producto.nombre
+            txtPrecio.text = "$${"%.2f".format(producto.precio)}"
+            txtDescripcion.text = producto.descripcion
+            txtCategoria.text = producto.categoria
+
+            txtRestaurante.text =
+                restaurante?.nombre ?: "Restaurante desconocido"
+
         }
     }
 }

@@ -76,8 +76,14 @@ class ProductosFragment : Fragment() {
         recyclerProductos.adapter =
             ProductoAdapter(productos) { producto ->
 
-                // Más adelante abriremos aquí el detalle del producto.
+                val intent = android.content.Intent(
+                    requireContext(),
+                    com.abrahamdev.restaurantesmexico.DetalleProductoActivity::class.java
+                )
 
+                intent.putExtra("PRODUCTO_ID", producto.id)
+
+                startActivity(intent)
             }
     }
 }

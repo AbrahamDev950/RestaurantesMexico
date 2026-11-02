@@ -47,4 +47,11 @@ object ProductoRepository {
                     producto.categoria == categoria
         }
     }
+
+    fun obtenerProductoPorId(productoId: Int): Producto? {
+
+        return productos.find { producto ->
+            producto.id == productoId
+        }
+    }
 }
