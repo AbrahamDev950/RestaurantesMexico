@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Restaurantes CDMX"
+        android:text="Restaurantes"
         android:textSize="24sp"
         android:textStyle="bold"
         android:paddingBottom="16dp"/>

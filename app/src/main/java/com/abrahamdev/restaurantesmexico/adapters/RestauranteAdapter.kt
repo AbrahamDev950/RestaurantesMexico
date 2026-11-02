@@ -9,7 +9,9 @@ import com.abrahamdev.restaurantesmexico.R
 import com.abrahamdev.restaurantesmexico.data.Restaurante
 
 class RestauranteAdapter(
-    private val restaurantes: List<Restaurante>
+    private val restaurantes: List<Restaurante>,
+    // Recibe una función lambda que se ejecutará cuando se haga clic en un restaurante
+    private val onRestauranteClick: (Restaurante) -> Unit
 ) : RecyclerView.Adapter<RestauranteAdapter.RestauranteViewHolder>() {
 
     class RestauranteViewHolder(itemView: View) :
@@ -41,6 +43,10 @@ class RestauranteAdapter(
         holder.nombre.text = restaurante.nombre
         holder.direccion.text = restaurante.direccion
         holder.descripcion.text = restaurante.descripcion
+        // El adapter se encarga de manejar el clic pero el activity lo maneja
+        holder.itemView.setOnClickListener {
+            onRestauranteClick(restaurante)
+        }
     }
 
     override fun getItemCount(): Int {
