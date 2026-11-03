@@ -9,7 +9,11 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.abrahamdev.restaurantesmexico.adapters.MenuPagerAdapter
 import com.abrahamdev.restaurantesmexico.data.RestauranteRepository
 import com.google.android.material.appbar.MaterialToolbar
+import android.view.Menu
+import androidx.appcompat.widget.SearchView
+import com.abrahamdev.restaurantesmexico.fragments.ProductosFragment
 class MenuActivity : AppCompatActivity() {
+    private lateinit var viewPager: ViewPager2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +55,7 @@ class MenuActivity : AppCompatActivity() {
             R.id.tabLayout
         )
 
-        val viewPager = findViewById<ViewPager2>(
+        viewPager = findViewById(
             R.id.viewPager
         )
 
@@ -78,6 +82,38 @@ class MenuActivity : AppCompatActivity() {
         }.attach()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+
+        menuInflater.inflate(R.menu.menu_busqueda, menu)
+
+        val itemBuscar = menu.findItem(R.id.action_buscar)
+
+        val searchView = itemBuscar.actionView as SearchView
+
+        searchView.queryHint = "Buscar producto..."
+
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+
+                    val fragment = supportFragmentManager.fragments
+                        .filterIsInstance<ProductosFragment>()
+                        .firstOrNull { it.isResumed }
+
+                    fragment?.filtrarProductos(newText.orEmpty())
+
+                    return true
+                }
+            }
+        )
+
+        return true
+    }
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true

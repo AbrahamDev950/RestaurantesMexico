@@ -9,10 +9,11 @@ import com.abrahamdev.restaurantesmexico.R
 import com.abrahamdev.restaurantesmexico.data.Producto
 
 class ProductoAdapter(
-    private val productos: List<Producto>,
+    productos: List<Producto>,
     private val onProductoClick: (Producto) -> Unit
 ) : RecyclerView.Adapter<ProductoAdapter.ProductoViewHolder>() {
-
+    private val productosOriginales = productos.toList()
+    private var productos = productos.toList()
     class ProductoViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
 
@@ -55,5 +56,22 @@ class ProductoAdapter(
 
     override fun getItemCount(): Int {
         return productos.size
+    }
+
+    fun filtrar(texto: String) {
+
+        productos = if (texto.isBlank()) {
+
+            productosOriginales
+
+        } else {
+
+            productosOriginales.filter { producto ->
+                producto.nombre.contains(texto, ignoreCase = true) ||
+                        producto.descripcion.contains(texto, ignoreCase = true)
+            }
+        }
+
+        notifyDataSetChanged()
     }
 }

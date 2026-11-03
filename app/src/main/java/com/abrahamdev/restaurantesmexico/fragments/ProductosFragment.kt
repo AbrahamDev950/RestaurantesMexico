@@ -12,7 +12,7 @@ import com.abrahamdev.restaurantesmexico.adapters.ProductoAdapter
 import com.abrahamdev.restaurantesmexico.data.ProductoRepository
 
 class ProductosFragment : Fragment() {
-
+    private lateinit var productoAdapter: ProductoAdapter
     companion object {
 
         private const val ARG_RESTAURANTE_ID = "restaurante_id"
@@ -73,7 +73,7 @@ class ProductosFragment : Fragment() {
         recyclerProductos.layoutManager =
             LinearLayoutManager(requireContext())
 
-        recyclerProductos.adapter =
+        productoAdapter =
             ProductoAdapter(productos) { producto ->
 
                 val intent = android.content.Intent(
@@ -85,5 +85,11 @@ class ProductosFragment : Fragment() {
 
                 startActivity(intent)
             }
+        recyclerProductos.adapter = productoAdapter
+    }
+    fun filtrarProductos(texto: String) {
+        if (::productoAdapter.isInitialized) {
+            productoAdapter.filtrar(texto)
+        }
     }
 }
