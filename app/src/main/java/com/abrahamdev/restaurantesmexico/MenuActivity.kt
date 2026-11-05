@@ -12,27 +12,36 @@ import com.google.android.material.appbar.MaterialToolbar
 import android.view.Menu
 import androidx.appcompat.widget.SearchView
 import com.abrahamdev.restaurantesmexico.fragments.ProductosFragment
+
+/**
+ * Clase que representa la actividad después haber elegido un restaurante.
+ */
 class MenuActivity : AppCompatActivity() {
+
     private lateinit var viewPager: ViewPager2
 
+    /**
+     * Método que se ejecuta al crear la actividad.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
+        // Configuramos la Toolbar
         val toolbar = findViewById<MaterialToolbar>(
             R.id.toolbar
         )
-
         setSupportActionBar(toolbar)
-
+        // Habilitamos el botón de retroceso
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        // Recuperamos el ID del restaurante seleccionado
+
+        // Obtenemos el intent con el ID del restaurante seleccionado
         val restauranteId = intent.getIntExtra(
             "RESTAURANTE_ID",
             -1
         )
 
-        // Buscamos el restaurante
+        // Buscamos el restaurante con ayuda de un repositorio
         val restaurante = RestauranteRepository
             .obtenerRestaurantes()
             .find { it.id == restauranteId }
@@ -82,16 +91,21 @@ class MenuActivity : AppCompatActivity() {
         }.attach()
     }
 
+    /**
+     * Método que infla el menú de opciones.
+     */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
 
         menuInflater.inflate(R.menu.menu_busqueda, menu)
 
+        // Configuramos la barra de búsqueda
         val itemBuscar = menu.findItem(R.id.action_buscar)
 
         val searchView = itemBuscar.actionView as SearchView
 
         searchView.queryHint = "Buscar producto..."
 
+        // Listener para la búsqueda
         searchView.setOnQueryTextListener(
             object : SearchView.OnQueryTextListener {
 
@@ -101,6 +115,7 @@ class MenuActivity : AppCompatActivity() {
 
                 override fun onQueryTextChange(newText: String?): Boolean {
 
+                    // Dependiendo el fragmento visible, filtramos los productos
                     val fragment = supportFragmentManager.fragments
                         .filterIsInstance<ProductosFragment>()
                         .firstOrNull { it.isResumed }
@@ -114,6 +129,9 @@ class MenuActivity : AppCompatActivity() {
 
         return true
     }
+    /*
+     * Método que se ejecuta al hacer clic en el botón de retroceso.
+     */
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true
