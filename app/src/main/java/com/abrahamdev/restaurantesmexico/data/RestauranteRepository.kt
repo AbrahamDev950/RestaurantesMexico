@@ -1,7 +1,7 @@
 
 package com.abrahamdev.restaurantesmexico.data
 /*
- * Repositorio de datos con datos que representan a un restaurante.
+ * Repositorio de datos con datos que representan un restaurante.
  */
 object RestauranteRepository {
 

@@ -95,33 +95,24 @@ class MenuActivity : AppCompatActivity() {
      * Método que infla el menú de opciones.
      */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-
         menuInflater.inflate(R.menu.menu_busqueda, menu)
-
         // Configuramos la barra de búsqueda
         val itemBuscar = menu.findItem(R.id.action_buscar)
-
         val searchView = itemBuscar.actionView as SearchView
-
         searchView.queryHint = "Buscar producto..."
 
         // Listener para la búsqueda
         searchView.setOnQueryTextListener(
             object : SearchView.OnQueryTextListener {
-
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     return true
                 }
-
                 override fun onQueryTextChange(newText: String?): Boolean {
-
                     // Dependiendo el fragmento visible, filtramos los productos
                     val fragment = supportFragmentManager.fragments
                         .filterIsInstance<ProductosFragment>()
                         .firstOrNull { it.isResumed }
-
                     fragment?.filtrarProductos(newText.orEmpty())
-
                     return true
                 }
             }

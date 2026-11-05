@@ -4,6 +4,8 @@ package com.abrahamdev.restaurantesmexico.adapters
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.abrahamdev.restaurantesmexico.fragments.ProductosFragment
+import com.abrahamdev.restaurantesmexico.fragments.ProductosFragment.Companion.nuevaInstancia
+
 /*
  * Adaptador para el ViewPager de productos.
  */
@@ -32,7 +34,7 @@ class MenuPagerAdapter(
         // Creamos un fragmento para cada categoría
         val categoria = categorias[position]
         // Devolvemos el fragmento con los productos de la categoría
-        return ProductosFragment.nuevaInstancia(
+        return nuevaInstancia(
             restauranteId,
             categoria
         )
