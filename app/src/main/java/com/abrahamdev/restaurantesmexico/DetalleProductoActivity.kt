@@ -1,10 +1,13 @@
 package com.abrahamdev.restaurantesmexico
 
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import com.abrahamdev.restaurantesmexico.data.local.DatabaseProvider
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.abrahamdev.restaurantesmexico.data.ProductoRepository
-import com.abrahamdev.restaurantesmexico.data.RestauranteRepository
 import com.google.android.material.appbar.MaterialToolbar
 class DetalleProductoActivity : AppCompatActivity() {
 
@@ -28,46 +31,36 @@ class DetalleProductoActivity : AppCompatActivity() {
         )
 
         // Buscamos el producto
-        val producto = ProductoRepository
-            .obtenerProductoPorId(productoId)
+        lifecycleScope.launch {
 
-        if (producto != null) {
+            val database = DatabaseProvider.getDatabase(this@DetalleProductoActivity)
 
-            // Buscamos el restaurante al que pertenece
-            val restaurante = RestauranteRepository
-                .obtenerRestaurantes()
-                .find { it.id == producto.restauranteId }
+            val (producto, restaurante) = withContext(Dispatchers.IO) {
 
-            // Referencias a los elementos visuales
-            val txtNombre = findViewById<TextView>(
-                R.id.txtDetalleNombre
-            )
+                val producto = database.productoDao()
+                    .obtenerProductoPorId(productoId)
 
-            val txtPrecio = findViewById<TextView>(
-                R.id.txtDetallePrecio
-            )
+                val restaurante = producto?.let {
+                    database.restauranteDao()
+                        .obtenerPorId(it.restauranteId)
+                }
 
-            val txtDescripcion = findViewById<TextView>(
-                R.id.txtDetalleDescripcion
-            )
+                producto to restaurante
+            }
 
-            val txtCategoria = findViewById<TextView>(
-                R.id.txtDetalleCategoria
-            )
+            if (producto != null) {
+                val txtNombre = findViewById<TextView>(R.id.txtDetalleNombre)
+                val txtPrecio = findViewById<TextView>(R.id.txtDetallePrecio)
+                val txtDescripcion = findViewById<TextView>(R.id.txtDetalleDescripcion)
+                val txtCategoria = findViewById<TextView>(R.id.txtDetalleCategoria)
+                val txtRestaurante = findViewById<TextView>(R.id.txtDetalleRestaurante)
 
-            val txtRestaurante = findViewById<TextView>(
-                R.id.txtDetalleRestaurante
-            )
-
-            // Mostramos la información
-            txtNombre.text = producto.nombre
-            txtPrecio.text = "$${"%.2f".format(producto.precio)}"
-            txtDescripcion.text = producto.descripcion
-            txtCategoria.text = producto.categoria
-
-            txtRestaurante.text =
-                restaurante?.nombre ?: "Restaurante desconocido"
-
+                txtNombre.text = producto.nombre
+                txtPrecio.text = "$${"%.2f".format(producto.precio)}"
+                txtDescripcion.text = producto.descripcion
+                txtCategoria.text = producto.categoria
+                txtRestaurante.text = restaurante?.nombre ?: "Restaurante desconocido"
+            }
         }
     }
 

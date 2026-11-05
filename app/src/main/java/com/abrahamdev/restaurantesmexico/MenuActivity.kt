@@ -1,5 +1,11 @@
 package com.abrahamdev.restaurantesmexico
 
+import com.abrahamdev.restaurantesmexico.data.local.DatabaseProvider
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -7,7 +13,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.abrahamdev.restaurantesmexico.adapters.MenuPagerAdapter
-import com.abrahamdev.restaurantesmexico.data.RestauranteRepository
 import com.google.android.material.appbar.MaterialToolbar
 import android.view.Menu
 import androidx.appcompat.widget.SearchView
@@ -27,27 +32,27 @@ class MenuActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Recuperamos el ID del restaurante seleccionado
-        val restauranteId = intent.getIntExtra(
-            "RESTAURANTE_ID",
-            -1
-        )
+        val restauranteId = intent.getIntExtra("RESTAURANTE_ID", -1)
 
-        // Buscamos el restaurante
-        val restaurante = RestauranteRepository
-            .obtenerRestaurantes()
-            .find { it.id == restauranteId }
-
-        // Mostramos su nombre
+        // Mostramos el nombre del restaurante
         val txtNombre = findViewById<TextView>(
             R.id.txtNombreRestaurante
         )
 
-        if (restaurante != null) {
-            txtNombre.text = restaurante.nombre
+        lifecycleScope.launch {
 
-            supportActionBar?.title = restaurante.nombre
-        } else {
-            txtNombre.text = "Restaurante no encontrado"
+            val database = DatabaseProvider.getDatabase(this@MenuActivity)
+
+            val restaurante = withContext(Dispatchers.IO) {
+                database.restauranteDao().obtenerPorId(restauranteId)
+            }
+
+            if (restaurante != null) {
+                txtNombre.text = restaurante.nombre
+                supportActionBar?.title = restaurante.nombre
+            } else {
+                txtNombre.text = "Restaurante no encontrado"
+            }
         }
 
         // Obtenemos las pestañas y el ViewPager2

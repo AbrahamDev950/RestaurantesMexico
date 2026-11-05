@@ -1,5 +1,11 @@
 package com.abrahamdev.restaurantesmexico.fragments
 
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import com.abrahamdev.restaurantesmexico.data.Producto
+import com.abrahamdev.restaurantesmexico.data.local.DatabaseProvider
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.abrahamdev.restaurantesmexico.R
 import com.abrahamdev.restaurantesmexico.adapters.ProductoAdapter
-import com.abrahamdev.restaurantesmexico.data.ProductoRepository
 
 class ProductosFragment : Fragment() {
     private lateinit var productoAdapter: ProductoAdapter
@@ -65,16 +70,33 @@ class ProductosFragment : Fragment() {
             R.id.recyclerProductos
         )
 
-        val productos = ProductoRepository.obtenerProductos(
-            restauranteId,
-            categoria
-        )
-
         recyclerProductos.layoutManager =
             LinearLayoutManager(requireContext())
 
-        productoAdapter =
-            ProductoAdapter(productos) { producto ->
+        viewLifecycleOwner.lifecycleScope.launch {
+
+            val database = DatabaseProvider.getDatabase(requireContext())
+
+            val productos = withContext(Dispatchers.IO) {
+
+                database.productoDao().obtenerProductos(
+                    restauranteId,
+                    categoria
+                )
+            }
+
+            val productosModelo = productos.map { entidad ->
+                Producto(
+                    id = entidad.id,
+                    restauranteId = entidad.restauranteId,
+                    nombre = entidad.nombre,
+                    precio = entidad.precio,
+                    descripcion = entidad.descripcion,
+                    categoria = entidad.categoria
+                )
+            }
+
+            productoAdapter = ProductoAdapter(productosModelo) { producto ->
 
                 val intent = android.content.Intent(
                     requireContext(),
@@ -85,7 +107,30 @@ class ProductosFragment : Fragment() {
 
                 startActivity(intent)
             }
-        recyclerProductos.adapter = productoAdapter
+
+            recyclerProductos.adapter = productoAdapter
+        }
+//        val productos = ProductoRepository.obtenerProductos(
+//            restauranteId,
+//            categoria
+//        )
+//
+//        recyclerProductos.layoutManager =
+//            LinearLayoutManager(requireContext())
+//
+//        productoAdapter =
+//            ProductoAdapter(productos) { producto ->
+//
+//                val intent = android.content.Intent(
+//                    requireContext(),
+//                    com.abrahamdev.restaurantesmexico.DetalleProductoActivity::class.java
+//                )
+//
+//                intent.putExtra("PRODUCTO_ID", producto.id)
+//
+//                startActivity(intent)
+//            }
+//        recyclerProductos.adapter = productoAdapter
     }
     fun filtrarProductos(texto: String) {
         if (::productoAdapter.isInitialized) {

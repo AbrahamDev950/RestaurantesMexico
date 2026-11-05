@@ -8,6 +8,8 @@ import androidx.room.Query
 @Dao
 interface ProductoDao {
 
+    @Query("SELECT * FROM productos WHERE id = :productoId LIMIT 1")
+    suspend fun obtenerProductoPorId(productoId: Int): ProductoEntity?
     @Query("""
         SELECT * FROM productos
         WHERE restauranteId = :restauranteId
