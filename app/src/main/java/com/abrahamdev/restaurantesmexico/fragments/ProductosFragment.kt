@@ -4,8 +4,10 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
 import com.abrahamdev.restaurantesmexico.data.Producto
 import com.abrahamdev.restaurantesmexico.data.local.DatabaseProvider
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -110,27 +112,6 @@ class ProductosFragment : Fragment() {
 
             recyclerProductos.adapter = productoAdapter
         }
-//        val productos = ProductoRepository.obtenerProductos(
-//            restauranteId,
-//            categoria
-//        )
-//
-//        recyclerProductos.layoutManager =
-//            LinearLayoutManager(requireContext())
-//
-//        productoAdapter =
-//            ProductoAdapter(productos) { producto ->
-//
-//                val intent = android.content.Intent(
-//                    requireContext(),
-//                    com.abrahamdev.restaurantesmexico.DetalleProductoActivity::class.java
-//                )
-//
-//                intent.putExtra("PRODUCTO_ID", producto.id)
-//
-//                startActivity(intent)
-//            }
-//        recyclerProductos.adapter = productoAdapter
     }
     fun filtrarProductos(texto: String) {
         if (::productoAdapter.isInitialized) {

@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
@@ -44,7 +45,9 @@ class MenuActivity : AppCompatActivity() {
             val database = DatabaseProvider.getDatabase(this@MenuActivity)
 
             val restaurante = withContext(Dispatchers.IO) {
+                Log.d("MenuActivity", "Buscando restaurante con ID: $restauranteId")
                 database.restauranteDao().obtenerPorId(restauranteId)
+                    .also { Log.d("MenuActivity", "Restaurante encontrado: $it") }
             }
 
             if (restaurante != null) {

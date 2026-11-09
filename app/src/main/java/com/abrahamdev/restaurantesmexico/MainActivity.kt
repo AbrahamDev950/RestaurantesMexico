@@ -4,9 +4,11 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
 import com.abrahamdev.restaurantesmexico.data.Restaurante
 import com.abrahamdev.restaurantesmexico.data.local.DatabaseProvider
 import com.abrahamdev.restaurantesmexico.data.local.DatabaseSeeder
+
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent

@@ -1,5 +1,6 @@
 package com.abrahamdev.restaurantesmexico.data.local
 
+import android.util.Log
 import androidx.room.withTransaction
 import com.abrahamdev.restaurantesmexico.data.RestauranteRepository
 import com.abrahamdev.restaurantesmexico.data.ProductoRepository
@@ -10,13 +11,17 @@ class DatabaseSeeder(
 
     suspend fun inicializarDatos() {
 
+        Log.d("DatabaseSeeder", "Inicializando datos...")
         val restaurantesExistentes =
             database.restauranteDao().obtenerTodos()
+        Log.d("DatabaseSeeder", "Restaurantes existentes: $restaurantesExistentes")
 
         if (restaurantesExistentes.isNotEmpty()) {
+            Log.d("DatabaseSeeder", "Los restaurantes ya existen en la base de datos.")
             return
         }
 
+        Log.d("DatabaseSeeder", "Insertando restaurantes y productos...")
         database.withTransaction {
 
             val restaurantes = RestauranteRepository
@@ -57,6 +62,7 @@ class DatabaseSeeder(
 
             database.productoDao()
                 .insertarTodos(productos)
+            Log.d("DatabaseSeeder", "Restaurantes y productos insertados correctamente.")
         }
     }
 }
